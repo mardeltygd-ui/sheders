@@ -1,10 +1,10 @@
 #version 120
 
 // ---- Лучи солнца (god rays), лайт ----
-#define RAY_SAMPLES 10
-#define RAY_STRENGTH 0.45
-#define RAY_DENSITY 0.85
-#define RAY_DECAY 0.93
+#define RAY_SAMPLES 6
+#define RAY_STRENGTH 0.5
+#define RAY_DENSITY 0.8
+#define RAY_DECAY 0.9
 
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
@@ -22,7 +22,8 @@ void main() {
     bool day = sunAngle < 0.5;
     vec3 sunDir = normalize(sunPosition);
 
-    if (day && sunDir.z < 0.0) {
+    // считаем лучи только если смотрим примерно в сторону солнца и нет дождя
+    if (day && sunDir.z < -0.3 && rainStrength < 0.9) {
         vec4 sp = gbufferProjection * vec4(sunPosition, 1.0);
         vec2 sunScreen = sp.xy / sp.w * 0.5 + 0.5;
 

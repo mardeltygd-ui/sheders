@@ -1,8 +1,8 @@
 #version 120
 
 // ---- Настройки (лайт-версия) ----
-const int   shadowMapResolution = 1024;  // меньше = быстрее
-const float shadowDistance      = 64.0;
+const int   shadowMapResolution = 512;   // меньше = быстрее
+const float shadowDistance      = 40.0;
 const float sunPathRotation     = -20.0; // наклон солнца, чтобы тени были не строго вниз
 
 #define SHADOW_STRENGTH 0.35 // 0.0 = без теней, 1.0 = очень тёмные
@@ -33,14 +33,13 @@ void main() {
     float shadow = 1.0;
     vec3 sc = shadowPos;
 
-    if (ndl > 0.0 && sc.x > 0.0 && sc.x < 1.0 && sc.y > 0.0 && sc.y < 1.0 && sc.z < 1.0) {
-        float z = sc.z - 0.0006;
+    // тени считаем только там, где есть небесный свет и грань смотрит на солнце
+    if (ndl > 0.0 && lmcoord.y > 0.3 && sc.x > 0.0 && sc.x < 1.0 && sc.y > 0.0 && sc.y < 1.0 && sc.z < 1.0) {
+        float z = sc.z - 0.001;
         float t = 1.0 / float(shadowMapResolution);
-        // 4 выборки — лёгкое смягчение краёв
-        shadow = 0.25 * (lit(sc.xy + vec2( t,  t), z)
-                       + lit(sc.xy + vec2(-t,  t), z)
-                       + lit(sc.xy + vec2( t, -t), z)
-                       + lit(sc.xy + vec2(-t, -t), z));
+        // всего 2 выборки по диагонали — мягкие края почти бесплатно
+        shadow = 0.5 * (lit(sc.xy + vec2( t,  t), z)
+                      + lit(sc.xy + vec2(-t, -t), z));
     }
 
     // грани, повёрнутые от солнца, тоже слегка затеняются

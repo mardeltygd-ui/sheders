@@ -16,7 +16,7 @@
 
 ## Настройка под слабое железо
 - `shaders/gbuffers_textured_lit.fsh`
-  - `shadowMapResolution` — 512 для совсем слабых ПК
+  - `shadowMapResolution` — сейчас 512 (минимум нагрузки)
   - `shadowDistance` — дальность теней
   - `SHADOW_STRENGTH` — насколько тёмные тени
 - `shaders/composite.fsh`
